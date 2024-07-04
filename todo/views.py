@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import Http404
 from django.utils.timezone import make_aware  # タイムゾーンを含む日時を作成する関数をインポート
 from django.utils.dateparse import parse_datetime  # 文字列からdatetimeオブジェクトを解析する関数をインポート
 from todo.models import Task  # Taskモデルをインポート
@@ -24,3 +25,15 @@ def index(request):
         'tasks': tasks
     }
     return render(request, 'todo/index.html', context)  # テンプレートをレンダリングし、レスポンスを返す
+
+
+def detail(request, task_id):
+    try:
+        task = Task.objects.get(pk=task_id)
+    except Task.DoesNotExist:
+        raise Http404("Task does not exist")
+
+    context = {
+        'task': task,
+    }
+    return render(request, 'todo/detail.html', context)
