@@ -11,7 +11,6 @@ class Task(models.Model):
     posted_at = models.DateTimeField(default=timezone.now)
     # 締切 datetime
     due_at = models.DateTimeField(null=True, blank=True)
-
     # ★メソッド
     def is_overdue(self, dt):  # タスクが期限切れかどうかを判定するメソッドを定義
         # 締切日時が設定されていない場合、Falseを返す
