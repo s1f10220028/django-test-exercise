@@ -11,8 +11,12 @@ def index(request):
                     due_at=make_aware(parse_datetime(request.POST['due_at'])))
         task.save()
 
-    # データベースから全てのTaskオブジェクトを取得
-    tasks = Task.objects.all()
+    # order=dueというパラメータが指定されている場合、締切の早い順に表示
+    if request.GET.get('order') == 'due':
+        tasks = Task.objects.order_by('due_at')
+    else:
+        # それ以外の場合、登録の最新順に表示
+        tasks = Task.objects.order_by('-posted_at')
 
     # コンテキストを作成し、テンプレートに渡す
     context = {
