@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.utils import timezone
 from datetime import datetime
 from todo.models import Task
@@ -20,7 +20,7 @@ class TaskModelTestCase(TestCase):
         self.assertFalse(task.completed)
         self.assertEqual(task.due_at,due)
 
-    def test_creae_task2(self):
+    def test_creat_task2(self):
         task =Task(title='task2')
         task.save()
 
@@ -36,3 +36,27 @@ class TaskModelTestCase(TestCase):
         task.save()
 
         self.assertFalse(task.is_overdue(current))
+
+
+class TodoViewTestCase(TestCase):
+    def test_index_get(self):
+        # GETメソッドで / にアクセスしたとき、
+        # ・ステータスコード200
+        # 適切なテンプレートが呼び出される
+        # Taskの件数が0
+        client = Client()
+        responce = client.get('/')
+
+        self.assertEqual(responce.status_code, 200)
+        self.assertEqual(responce.templates[0].name, 'todo/index.html')
+        self.assertEqual(len(responce.context['tasks']), 0)
+    
+    def test_index_post(self):
+        # ☝（件数が1になるか）
+        client = Client()
+        data = {'title': 'Test Task', 'due_at': '2024-06-30 23:59:59'}
+        responce = client.post('/', data)
+
+        self.assertEqual(responce.status_code, 200)
+        self.assertEqual(responce.templates[0].name, 'todo/index.html')
+        self.assertEqual(len(responce.context['tasks']), 1)
