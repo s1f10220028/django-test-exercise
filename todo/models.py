@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 # Create your models here.
 class Task(models.Model):
     # タイトル
@@ -10,7 +11,7 @@ class Task(models.Model):
     # 登録日 デフォ:現在時刻
     posted_at = models.DateTimeField(default=timezone.now)
     # 締切 null可
-    due_at = models.DateTimeField(null=True,blank=True)
+    due_at = models.DateTimeField(null=True, blank=True)
 
     def is_overdue(self, dt):
         if self.due_at is None:
